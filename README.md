@@ -21,13 +21,12 @@ model_name: squeezebert-mnli-headless
 min difference: 0.0   
 max difference: 7.4505806e-07 
 
-# QQP数据集合效果  
-eval loss: 0.727248,   
-acc: 0.9074449666089538,   
-precision: 0.8636037329504667,   
-recall: 0.8890157877057441,   
-f1: 0.876125529661017,   
-acc and f1: 0.8917852481349854,   
+# QQP数据集合效果 
+
+| acc | precision | recall | f1 |
+| :----:| :----:| :----: | :----:|
+| 0.9074 | 0.8636 | 0.8890 | 0.8761 |
+
 eval done total : 196.50919675827026 s  
 
 运行参数
