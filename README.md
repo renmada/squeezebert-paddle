@@ -10,21 +10,24 @@
 链接: https://pan.baidu.com/s/1Jis7In0veo4ODae5OR_FqA 提取码: p5bk
 
 ## 前向传播精度和速度对比
+```
 python compare.py
 
-model_name: squeezebert-uncased  
-min difference: 0.0   
-max difference: 6.556511e-07  
-squeeze cost 51.86033248901367, bert cost 83.77599716186523   
-
-model_name: squeezebert-mnli   
-min difference: 0.0   
-max difference: 7.4505806e-07   
+# model_name: squeezebert-uncased
+# mean difference: 8.8708525e-08
+# max difference: 6.556511e-07
+# squeeze paddle  cost 43.851375579833984,  squeeze torch cotst 48.86937141418457, bert cost 51.83529853820801
 
 
-model_name: squeezebert-mnli-headless   
-min difference: 0.0   
-max difference: 7.4505806e-07 
+# model_name: squeezebert-mnli
+# mean difference: 1.12165566e-07
+# max difference: 7.4505806e-07
+
+# model_name: squeezebert-mnli-headless
+# mean difference: 1.12165566e-07
+# max difference: 7.4505806e-07
+
+```
 
 ## QQP数据集合效果 
 
