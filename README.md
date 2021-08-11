@@ -1,12 +1,17 @@
 # squeezebert-paddle
+## 验收标准
+1. 完成模型权重从pytorch到paddle的转换代码，转换3个预训练权重（“squeezebert/squeezebert-uncased”，
+“squeezebert/squeezebert-mnli”，“squeezebert/squeezebert-mnli-headless”）
+2. "squeezebert/squeezebert-mnli-headless"模型指标：QQP验证集accuracy=89.4（见论文Table 2）
+3. SqueezeBERT模型加速比对比BERT-Base达到4.3x（见论文Table 2）
+4. 提交PR至PaddleNLP
 
-#当前成果
-1. paddle版本的代码
-2. pytorch转化的权重
+## 权重下载
+链接: https://pan.baidu.com/s/1Jis7In0veo4ODae5OR_FqA 提取码: p5bk
 
-# 前向传播精度和速度对比
-执行这个文件 modeling.py，速度是在i5-7500上的表现  
- 
+## 前向传播精度和速度对比
+python compare.py
+
 model_name: squeezebert-uncased  
 min difference: 0.0   
 max difference: 6.556511e-07  
@@ -21,15 +26,8 @@ model_name: squeezebert-mnli-headless
 min difference: 0.0   
 max difference: 7.4505806e-07 
 
-# QQP数据集合效果 
+## QQP数据集合效果 
 
-| acc | precision | recall | f1 |
-| :----:| :----:| :----: | :----:|
-| 0.9074 | 0.8636 | 0.8890 | 0.8761 |
-
-eval done total : 196.50919675827026 s  
-
-运行参数
 ```
 export CUDA_VISIBLE_DEVICES=0
 export TASK_NAME=QQP
@@ -46,3 +44,8 @@ python -u ./run_glue.py \
     --output_dir ./tmp/$TASK_NAME/ \
     --device gpu
 ```
+*运行结果*
+
+| acc | precision | recall | f1 |
+| :----:| :----:| :----: | :----:|
+| 0.9074 | 0.8636 | 0.8890 | 0.8761 |
