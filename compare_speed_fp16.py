@@ -4,8 +4,7 @@ import numpy as np
 import time
 from modeling import *
 import paddle
-from tokenizer import *
-from utils import *
+paddle.set_default_dtype('float16')
 
 configs = [{
     "attention_probs_dropout_prob": 0.1,
@@ -78,43 +77,33 @@ configs = [{
         'layer_norm_eps': 1e-12
     }
 ]
-inputs = ['it is a nice day today!', 'hello_moto']
-# inputs = ['it is a nice day today!']
-
-names = ['squeezebert-uncased', 'squeezebert-mnli', 'squeezebert-mnli-headless']
-
-for i in range(3):
+names = ['squeezebert-uncased']
+for i in range(1):
     config = configs[i]
     name = names[i]
-    model_path = 'C:/Users/xly/Desktop/paddle复现/models/{}/'.format(name)
     paddle_model = SqueezeBertModel(**config)
-    # paddle_model = SqueezeBertModel.from_pretrained(model_path)
     states = paddle.load('C:/Users/xly/Desktop/paddle复现/models/{}/model_state.pdparams'.format(name))
     paddle_model.set_state_dict(states)
     paddle_model.eval()
-    paddle_tokenizer = SqueezeBertTokenizer.from_pretrained(model_path)
-    inp = paddle_tokenizer.batch_encode(inputs, return_attention_mask=True)
-    input_ids = sequence_padding([x['input_ids'] for x in inp])
-    mask = sequence_padding([x['attention_mask'] for x in inp])
+    input = 'it is a nice day today!'
+    tokenizer = tfm.SqueezeBertTokenizer.from_pretrained('C:/Users/xly/Desktop/paddle复现/models/{}/'.format(name))
     #
-    paddle_inp = paddle.to_tensor(input_ids)
-    mask = paddle.to_tensor(mask)
+    input_ids = tokenizer.encode(input, return_tensors='np')
+    paddle_inp = paddle.Tensor(input_ids.astype('int64'))
     t = time.time()
     with paddle.no_grad():
-        paddle_out = paddle_model(paddle_inp, attention_mask=mask)
-        # paddle_out = paddle_model(paddle_inp)
-    t_squeeze = time.time() - t
+        paddle_out = paddle_model(paddle_inp)
+    print('here')
 
-    tokenizer = tfm.SqueezeBertTokenizer.from_pretrained(model_path)
+    t_squeeze = time.time() - t
     torch_model = tfm.models.squeezebert.SqueezeBertModel.from_pretrained(
-        model_path)
+        'C:/Users/xly/Desktop/paddle复现/models/{}/'.format(name))
     torch_model.eval()
-    torch_model.float()
-    torch_inp = tokenizer.batch_encode_plus(inputs, return_attention_mask=True, padding=True,
-                                            return_tensors='pt', return_token_type_ids=False)
+    # torch_model.float()
+    torch_inp = torch.from_numpy(np.array(paddle_inp)).long()
     t = time.time()
     with torch.no_grad():
-        torch_out = torch_model(**torch_inp)
+        torch_out = torch_model(torch_inp)
     t_torch = time.time() - t
     for a, b in zip(paddle_model.named_parameters(), torch_model.named_parameters()):
         t1 = a[1].numpy()
@@ -141,3 +130,7 @@ for i in range(3):
         print('squeeze paddle  cost {},  squeeze torch cotst {}, bert cost {}'.format(t_squeeze * 1000,
                                                                                       t_torch * 1000,
                                                                                       t_bert * 1000))
+
+
+
+from transformers.models.squeezebert import SqueezeBertModel

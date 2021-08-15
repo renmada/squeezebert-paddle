@@ -15,7 +15,7 @@
 
 import os
 
-from .. import BasicTokenizer, PretrainedTokenizer, WordpieceTokenizer
+from paddlenlp.transformers import BasicTokenizer, PretrainedTokenizer, WordpieceTokenizer
 
 __all__ = ['SqueezeBertTokenizer', ]
 

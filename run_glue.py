@@ -36,6 +36,7 @@ from paddlenlp.transformers import ErnieForSequenceClassification, ErnieTokenize
 from paddlenlp.transformers import LinearDecayWithWarmup
 from paddlenlp.metrics import AccuracyAndF1, Mcc, PearsonAndSpearman
 from modeling import *
+from tokenizer import *
 
 FORMAT = '%(asctime)s-%(levelname)s: %(message)s'
 logging.basicConfig(level=logging.INFO, format=FORMAT)
@@ -57,7 +58,7 @@ MODEL_CLASSES = {
     "electra": (ElectraForSequenceClassification, ElectraTokenizer),
     "ernie": (ErnieForSequenceClassification, ErnieTokenizer),
     "albert": (AlbertForSequenceClassification, AlbertTokenizer),
-    'squeezebert': (BertForSequenceClassification, BertTokenizer)
+    'squeezebert': (SqueezeBertForSequenceClassification, SqueezeBertTokenizer)
 }
 
 
@@ -181,8 +182,8 @@ def evaluate(model, loss_fct, metric, data_loader):
     model.eval()
     metric.reset()
     for batch in data_loader:
-        input_ids, segment_ids, labels = batch
-        logits = model(input_ids, segment_ids)
+        input_ids, segment_ids, mask, labels = batch
+        logits = model(input_ids, segment_ids, attention_mask=mask)
         loss = loss_fct(logits, labels)
         correct = metric.compute(logits, labels)
         metric.update(correct)
@@ -224,17 +225,20 @@ def convert_example(example,
         label = np.array([label], dtype=label_dtype)
     # Convert raw text to feature
     if (int(is_test) + len(example)) == 2:
-        example = tokenizer(example['sentence'], max_seq_len=max_seq_length)
+        example = tokenizer(example['sentence'], max_seq_len=max_seq_length,
+                            return_attention_mask=True
+                            )
     else:
         example = tokenizer(
             example['sentence1'],
             text_pair=example['sentence2'],
-            max_seq_len=max_seq_length)
+            max_seq_len=max_seq_length,
+            return_attention_mask=True)
 
     if not is_test:
-        return example['input_ids'], example['token_type_ids'], label
+        return example['input_ids'], example['token_type_ids'], example['attention_mask'], label
     else:
-        return example['input_ids'], example['token_type_ids']
+        return example['input_ids'], example['token_type_ids'], example['attention_mask']
 
 
 def do_train(args):
@@ -263,7 +267,8 @@ def do_train(args):
         train_ds, batch_size=args.batch_size, shuffle=True)
     batchify_fn = lambda samples, fn=Tuple(
         Pad(axis=0, pad_val=tokenizer.pad_token_id),  # input
-        Pad(axis=0, pad_val=tokenizer.pad_token_type_id),  # segment
+        Pad(axis=0, pad_val=tokenizer.pad_token_type_id),
+        Pad(axis=0, pad_val=0),  # segment
         Stack(dtype="int64" if train_ds.label_list else "float32")  # label
     ): fn(samples)
     train_data_loader = DataLoader(
@@ -350,8 +355,8 @@ def do_train(args):
         for step, batch in enumerate(train_data_loader):
             global_step += 1
 
-            input_ids, segment_ids, labels = batch
-            logits = model(input_ids, segment_ids)
+            input_ids, segment_ids, mask, labels = batch
+            logits = model(input_ids, segment_ids, attention_mask=mask)
             loss = loss_fct(logits, labels)
             loss.backward()
             optimizer.step()
