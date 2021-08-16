@@ -33,17 +33,18 @@ python compare.py
 
 ```
 export CUDA_VISIBLE_DEVICES=0
-export TASK_NAME=QQP
+export TASK_NAME="QQP"
+
 python -u ./run_glue.py \
     --model_type squeezebert \
     --model_name_or_path ./ \
     --task_name $TASK_NAME \
-    --max_seq_length 128 \
     --batch_size 16   \
-    --learning_rate 3e-05 \
-    --num_train_epochs 3 \
+    --learning_rate 4e-5 \
+    --num_train_epochs 5 \
+    --warmup_steps 1000 \
     --logging_steps 1 \
-    --save_steps 20000 \
+    --save_steps 3000 \
     --output_dir ./tmp/$TASK_NAME/ \
     --device gpu
 ```
