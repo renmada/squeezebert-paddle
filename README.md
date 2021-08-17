@@ -39,17 +39,18 @@ python -u ./run_glue.py \
     --model_type squeezebert \
     --model_name_or_path ./ \
     --task_name $TASK_NAME \
-    --batch_size 16   \
+    --batch_size 32  \
     --learning_rate 4e-5 \
-    --num_train_epochs 5 \
+    --num_train_epochs 6 \
     --warmup_steps 1000 \
     --logging_steps 1 \
     --save_steps 3000 \
-    --output_dir ./tmp/$TASK_NAME/ \
-    --device gpu
+    --output_dir ./tmp2/$TASK_NAME/ \
+    --device gpu \
+    --seed 130
 ```
 *运行结果*
 
-| acc | precision | recall | f1 |
-| :----:| :----:| :----: | :----:|
-| 0.9074 | 0.8636 | 0.8890 | 0.8761 |
+| acc | precision | recall | f1 |acc and f1|
+| :----:| :----:| :----: | :----:| :----:|
+| 0.908 | 0.862 | 0.893 | 0.878 |0.89328|
