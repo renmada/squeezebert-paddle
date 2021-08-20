@@ -142,7 +142,7 @@ def parse_args():
     )
     parser.add_argument(
         "--warmup_proportion",
-        default=0.1,
+        default=0,
         type=float,
         help="Linear warmup proportion over total steps.")
     parser.add_argument(
@@ -163,6 +163,11 @@ def parse_args():
         default="gpu",
         type=str,
         help="The device to select to train the model, is must be cpu/gpu/xpu.")
+    parser.add_argument(
+        "--lr_scheduler",
+        default=0,
+        type=int,
+        help="do lr_scheduler")
     args = parser.parse_args()
     return args
 
@@ -190,15 +195,20 @@ def evaluate(model, loss_fct, metric, data_loader):
     res = metric.accumulate()
     if isinstance(metric, AccuracyAndF1):
         print(
-            "eval loss: %f, acc: %s, precision: %s, recall: %s, f1: %s, acc and f1: %s, "
+            "acc and f1: %s, "
             % (
-                loss.numpy(),
-                res[0],
-                res[1],
-                res[2],
-                res[3],
                 res[4],),
             end='')
+        # print(
+        #     "eval loss: %f, acc: %s, precision: %s, recall: %s, f1: %s, acc and f1: %s, "
+        #     % (
+        #         loss.numpy(),
+        #         res[0],
+        #         res[1],
+        #         res[2],
+        #         res[3],
+        #         res[4],),
+        #     end='')
     elif isinstance(metric, Mcc):
         print("eval loss: %f, mcc: %s, " % (loss.numpy(), res[0]), end='')
     elif isinstance(metric, PearsonAndSpearman):
@@ -254,8 +264,8 @@ def do_train(args):
     model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
 
     train_ds = load_dataset('glue', args.task_name, splits="train")
-    tokenizer = tokenizer_class(os.path.join(args.model_name_or_path, 'vocab.txt'))
-    # tokenizer = tokenizer_class.from_pretrained(args.model_name_or_path)
+    # tokenizer = tokenizer_class(os.path.join(args.model_name_or_path, 'vocab.txt'))
+    tokenizer = tokenizer_class.from_pretrained(args.model_name_or_path)
 
     trans_func = partial(
         convert_example,
@@ -335,14 +345,24 @@ def do_train(args):
         p.name for n, p in model.named_parameters()
         if not any(nd in n for nd in ["bias", "norm"])
     ]
-    optimizer = paddle.optimizer.AdamW(
-        learning_rate=lr_scheduler,
-        beta1=0.9,
-        beta2=0.999,
-        epsilon=args.adam_epsilon,
-        parameters=model.parameters(),
-        weight_decay=args.weight_decay,
-        apply_decay_param_fun=lambda x: x in decay_params)
+    if args.lr_scheduler:
+        optimizer = paddle.optimizer.AdamW(
+            learning_rate=lr_scheduler,
+            beta1=0.9,
+            beta2=0.999,
+            epsilon=args.adam_epsilon,
+            parameters=model.parameters(),
+            weight_decay=args.weight_decay,
+            apply_decay_param_fun=lambda x: x in decay_params)
+    else:
+        optimizer = paddle.optimizer.AdamW(
+            learning_rate=args.learning_rate,
+            beta1=0.9,
+            beta2=0.999,
+            epsilon=args.adam_epsilon,
+            parameters=model.parameters(),
+            weight_decay=args.weight_decay,
+            apply_decay_param_fun=lambda x: x in decay_params)
 
     loss_fct = paddle.nn.loss.CrossEntropyLoss(
     ) if train_ds.label_list else paddle.nn.loss.MSELoss()
@@ -354,7 +374,6 @@ def do_train(args):
     for epoch in range(num_train_epochs):
         for step, batch in enumerate(train_data_loader):
             global_step += 1
-
             input_ids, segment_ids, mask, labels = batch
             logits = model(input_ids, segment_ids, attention_mask=mask)
             loss = loss_fct(logits, labels)
@@ -388,7 +407,7 @@ def do_train(args):
                     # Need better way to get inner model of DataParallel
                     model_to_save = model._layers if isinstance(
                         model, paddle.DataParallel) else model
-                    model_to_save.save_pretrained(output_dir)
+                    # model_to_save.save_pretrained(output_dir)
             if global_step >= num_training_steps:
                 return
 
