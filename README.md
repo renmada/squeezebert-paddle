@@ -1,10 +1,5 @@
 # squeezebert-paddle
-## 验收标准
-1. 完成模型权重从pytorch到paddle的转换代码，转换3个预训练权重（“squeezebert/squeezebert-uncased”，
-“squeezebert/squeezebert-mnli”，“squeezebert/squeezebert-mnli-headless”）
-2. "squeezebert/squeezebert-mnli-headless"模型指标：QQP验证集accuracy=89.4（见论文Table 2）
-3. SqueezeBERT模型加速比对比BERT-Base达到4.3x（见论文Table 2）
-4. 提交PR至PaddleNLP
+
 
 ## 权重转换 && 权重下载
 1. 修改convert_torch_to_paddle.py中的模型路径
@@ -39,7 +34,6 @@ python compare.py
 export CUDA_VISIBLE_DEVICES=0
 export TASK_NAME="QQP"
 
-export CUDA_VISIBLE_DEVICES=2
 nohup python -u ./run_glue.py --model_type squeezebert --model_name_or_path /home/xianglingyang/pretrained_models/paddle/squeezebert --task_name QQP --batch_size 16 --learning_rate 4e-5 --num_train_epochs 5  --logging_steps 10 --save_steps 2000 --output_dir ./tmp/QQP/ --device gpu --lr_scheduler 1 --seed 5
 ```
 *运行结果*
