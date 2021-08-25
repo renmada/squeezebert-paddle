@@ -86,10 +86,9 @@ names = ['squeezebert-uncased', 'squeezebert-mnli', 'squeezebert-mnli-headless']
 for i in range(3):
     config = configs[i]
     name = names[i]
-    model_path = 'C:/Users/xly/Desktop/paddle复现/models/{}/'.format(name)
+    model_path = './models/{}/'.format(name)
     paddle_model = SqueezeBertModel(**config)
-    # paddle_model = SqueezeBertModel.from_pretrained(model_path)
-    states = paddle.load('C:/Users/xly/Desktop/paddle复现/models/{}/model_state.pdparams'.format(name))
+    states = paddle.load('./models/{}/model_state.pdparams'.format(name))
     paddle_model.set_state_dict(states)
     paddle_model.eval()
     paddle_tokenizer = SqueezeBertTokenizer.from_pretrained(model_path)
@@ -138,6 +137,6 @@ for i in range(3):
         with paddle.no_grad():
             out = bert(paddle_inp)
         t_bert = time.time() - t
-        print('squeeze paddle  cost {},  squeeze torch cotst {}, bert cost {}'.format(t_squeeze * 1000,
+        print('squeeze paddle  cost {},  squeeze torch cost {}, bert cost {}'.format(t_squeeze * 1000,
                                                                                       t_torch * 1000,
                                                                                       t_bert * 1000))

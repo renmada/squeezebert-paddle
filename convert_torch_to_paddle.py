@@ -20,11 +20,11 @@ def convert_pytorch_checkpoint_to_paddle(pytorch_checkpoint_path,
 if __name__ == "__main__":
     import torch
 
-    convert_pytorch_checkpoint_to_paddle('C:/Users/xly/Desktop/paddle复现/models/squeezebert-uncased/pytorch_model.bin',
-                                         'C:/Users/xly/Desktop/paddle复现/models/squeezebert-uncased/model_state.pdparams')
+    convert_pytorch_checkpoint_to_paddle('./models/squeezebert-uncased/pytorch_model.bin',
+                                         './models/squeezebert-uncased/model_state.pdparams')
 
-    convert_pytorch_checkpoint_to_paddle('C:/Users/xly/Desktop/paddle复现/models/squeezebert-mnli-headless/pytorch_model.bin',
-                                         'C:/Users/xly/Desktop/paddle复现/models/squeezebert-mnli-headless/model_state.pdparams')
+    convert_pytorch_checkpoint_to_paddle('./models/squeezebert-mnli-headless/pytorch_model.bin',
+                                         './models/squeezebert-mnli-headless/model_state.pdparams')
 
-    convert_pytorch_checkpoint_to_paddle('C:/Users/xly/Desktop/paddle复现/models/squeezebert-mnli/pytorch_model.bin',
-                                         'C:/Users/xly/Desktop/paddle复现/models/squeezebert-mnli/model_state.pdparams')
+    convert_pytorch_checkpoint_to_paddle('./models/squeezebert-mnli/pytorch_model.bin',
+                                         './models/squeezebert-mnli/model_state.pdparams')
