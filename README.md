@@ -31,14 +31,14 @@ python compare.py
 
 ## QQP数据集合效果 
 ### 运行步骤
-1. 在models/squeezebert-mnli-headles复制一份config.json,改名为model_config.json
+在models/squeezebert-mnli-headles复制一份config.json,改名为model_config.json
 ```
 export CUDA_VISIBLE_DEVICES=0
 export TASK_NAME="QQP"
 
 nohup python -u ./run_glue.py --model_type squeezebert --model_name_or_path ./models/squeezebert-mnli-headless --task_name QQP --batch_size 16 --learning_rate 4e-5 --num_train_epochs 5  --logging_steps 10 --save_steps 2000 --output_dir ./tmp/QQP/ --device gpu --lr_scheduler 1 --seed 5
 ```
-*运行结果*
+### *运行结果*
 ```
 acc and f1: 0.8936136479314183, eval done total : 196.82215237617493 s
 
@@ -46,3 +46,5 @@ acc and f1: 0.8936136479314183, eval done total : 196.82215237617493 s
 |acc and f1|
 | :----:|
 |0.8936|
+### 训练日志
+见train_log.txt
