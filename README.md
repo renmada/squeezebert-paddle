@@ -2,9 +2,8 @@
 
 
 ## 权重转换 && 权重下载
-1. 从https://huggingface.co/squeezebert下载hg的权重到models对应的目录下
-2. convert_torch_to_paddle.py中的模型路径
-3. ```python convert_torch_to_paddle.py```
+1. 从https://huggingface.co/squeezebert 下载hg的权重到models对应的目录下
+2. ```python convert_torch_to_paddle.py```
 
 转好的模型链接: https://pan.baidu.com/s/1Jis7In0veo4ODae5OR_FqA 提取码: p5bk
 
