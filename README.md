@@ -40,20 +40,20 @@ python run_qqp_paddle.py \
  --model_type bert
 
 # pytoch bert在gpu上预测
-# python run_qqp_torch.py \
+python run_qqp_torch.py \
  --model_path bert-base-uncased \
  --device gpu \
  --model_type bert
  
 ```
-squeezebert在gpu上加速比：
+*squeezebert在gpu上加速比*
 - paddle： 186 / 137 = 1.36
 - pytorch: 172 / 112 = 1.54
-
+*推理时间*
 | - |paddle-squeeze|pytorch-squeeze|paddle-bert|pytorch-bert|
 | :----:| :----:| :----:| :----:| :----:|
 |cpu|89s|41s|-|-|
-|gpu|137s|112s|186s|172s||
+|gpu|137s|112s|186s|172s|
 
 
 
