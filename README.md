@@ -8,6 +8,41 @@
 转好的模型链接: https://pan.baidu.com/s/1Jis7In0veo4ODae5OR_FqA 提取码: p5bk
 
 ## 前向传播精度和速度对比
+
+### 推理速度对比
+- 为了排除其他因素，预处理直接把batch的数据放在list里，不用dataset和dataloader
+- cpu推理只取前1000条
+```
+# paddle在gpu上预测
+python run_qqp_paddle.py \
+ --model_path ./models/squeezebert-mnli-headless \
+ --device gpu
+
+# paddle在cpu上预测
+python run_qqp_paddle.py \
+ --model_path ./models/squeezebert-mnli-headless \
+ --device cpu
+
+# pytorch在gpu上预测
+python run_qqp_torch.py \
+ --model_path ./models/squeezebert-mnli-headless \
+ --device gpu
+
+# pytorch在cpu上预测
+python run_qqp_torch.py \
+ --model_path ./models/squeezebert-mnli-headless \
+ --device cpu
+ 
+```
+| - |paddle|pytorch|
+| :----:| :----:| :----:|
+|cpu|89s|41s|
+|gpu|137s|112s
+
+
+
+
+
 ```
 python compare.py
 
@@ -25,6 +60,10 @@ python compare.py
 # model_name: squeezebert-mnli-headless
 # mean difference: 1.12165566e-07
 # max difference: 7.4505806e-07
+
+
+
+
 
 ```
 
