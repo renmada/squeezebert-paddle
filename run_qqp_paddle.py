@@ -1,25 +1,28 @@
 import paddle
 from modeling import SqueezeBertModel
 from tokenizer import SqueezeBertTokenizer
+from paddlenlp.transformers import BertModel, BertTokenizer
 from utils import *
 import time
 from tqdm import tqdm
 import argparse
-
 
 parser = argparse.ArgumentParser()
 
 # Required parameters
 parser.add_argument("--device", default=None, type=str, required=True, )
 parser.add_argument("--model_path", default=None, type=str, required=True, )
+parser.add_argument("--model_type", default='squeezebert', type=str, required=False, )
 
 args = parser.parse_args()
 paddle.set_device(args.device)
-
-
 model_path = args.model_path
-tokenizer = SqueezeBertTokenizer.from_pretrained(model_path)
-model = SqueezeBertModel.from_pretrained(model_path)
+
+model_class, tokenizer_class = {'bert': [BertModel, BertTokenizer],
+                                'squeezebert': [SqueezeBertModel, SqueezeBertTokenizer]}[args.model_type]
+
+tokenizer = tokenizer_class.from_pretrained(model_path)
+model = model_class.from_pretrained(model_path)
 
 
 def read_data():

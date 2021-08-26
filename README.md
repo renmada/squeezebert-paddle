@@ -33,11 +33,27 @@ python run_qqp_torch.py \
  --model_path ./models/squeezebert-mnli-headless \
  --device cpu
  
+# paddle bert在gpu上预测
+python run_qqp_paddle.py \
+ --model_path bert-base-uncased \
+ --device gpu \
+ --model_type bert
+
+# pytoch bert在gpu上预测
+# python run_qqp_torch.py \
+ --model_path bert-base-uncased \
+ --device gpu \
+ --model_type bert
+ 
 ```
-| - |paddle|pytorch|
-| :----:| :----:| :----:|
-|cpu|89s|41s|
-|gpu|137s|112s
+squeezebert在gpu上加速比：
+- paddle： 186 / 137 = 1.36
+- pytorch: 172 / 112 = 1.54
+
+| - |paddle-squeeze|pytorch-squeeze|paddle-bert|pytorch-bert|
+| :----:| :----:| :----:| :----:| :----:|
+|cpu|89s|41s|-|-|
+|gpu|137s|112s|186s|172s||
 
 
 
